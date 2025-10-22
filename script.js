@@ -16,7 +16,7 @@ function createRaindrop() {
 
   // Random color: 70% blue, 30% grey
   const isBlue = Math.random() < 0.7;
-  drop.classList.add(isBlue ? "blue" : "grey");
+  drop.classList.add(isBlue ? "blue" : "grey"); 
 
   // Random x position
   drop.style.left = Math.random() * 370 + "px";
