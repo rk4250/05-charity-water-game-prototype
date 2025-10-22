@@ -11,7 +11,7 @@ let gameInterval;
 let isGameRunning = false;
 
 function createRaindrop() {
-  const drop = document.createElement("div");
+  const drop = document.createElement("div"); 
   drop.classList.add("raindrop"); 
 
   // Random color: 70% blue, 30% grey
