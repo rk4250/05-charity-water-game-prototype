@@ -4,26 +4,54 @@ const scoreDisplay = document.getElementById("score");
 const livesDisplay = document.getElementById("lives");
 const startButton = document.getElementById("startButton");
 const scoreFill = document.getElementById("scoreFill");
+const difficultySelect = document.getElementById("difficulty");
 
 let score = 0;
 let lives = 3;
 let gameInterval;
 let isGameRunning = false;
+let difficulty = "normal";
+let spawnRate = 800;
+let goal = 100;
+
+// ✅ Difficulty settings
+function setDifficulty(level) {
+  difficulty = level;
+  if (level === "easy") {
+    spawnRate = 1000;
+    goal = 50;
+  } else if (level === "normal") {
+    spawnRate = 800;
+    goal = 100;
+  } else if (level === "hard") {
+    spawnRate = 500;
+    goal = 150;
+  }
+}
+difficultySelect.addEventListener("change", (e) => setDifficulty(e.target.value));
 
 function createRaindrop() {
-  const drop = document.createElement("div"); 
-  drop.classList.add("raindrop"); 
-
-  // Random color: 70% blue, 30% grey
+  const drop = document.createElement("div");
+  drop.classList.add("raindrop");
   const isBlue = Math.random() < 0.7;
-  drop.classList.add(isBlue ? "blue" : "grey"); 
-
-  // Random x position
+  drop.classList.add(isBlue ? "blue" : "grey");
   drop.style.left = Math.random() * 370 + "px";
   gameArea.appendChild(drop);
 
   let fallSpeed = 2 + Math.random() * 3;
   let topPosition = 0;
+
+  // 💧 Click to interact
+  drop.addEventListener("click", () => {
+    if (!isGameRunning) return;
+    if (drop.classList.contains("blue")) {
+      score += 10;
+    } else {
+      lives -= 1;
+    }
+    updateHUD();
+    drop.remove();
+  });
 
   const fall = setInterval(() => {
     topPosition += fallSpeed;
@@ -43,20 +71,25 @@ function createRaindrop() {
       } else {
         lives -= 1;
       }
-      scoreDisplay.textContent = `Score: ${score}`;
-      livesDisplay.textContent = `Lives: ${lives}`;
-      updateScoreBar();
+      updateHUD();
       drop.remove();
       clearInterval(fall);
     }
 
-    // Remove if falls out of area
     if (topPosition > 500) {
       drop.remove();
       clearInterval(fall);
     }
 
-    // Game over
+    // 🏆 Win condition
+    if (score >= goal) {
+      clearInterval(fall);
+      clearInterval(gameInterval);
+      isGameRunning = false;
+      alert(`🎉 You reached ${goal} points on ${difficulty} mode!`);
+    }
+
+    // ❌ Game over
     if (lives <= 0) {
       clearInterval(fall);
       clearInterval(gameInterval);
@@ -66,37 +99,37 @@ function createRaindrop() {
   }, 20);
 }
 
+function updateHUD() {
+  scoreDisplay.textContent = `Score: ${score}`;
+  livesDisplay.textContent = `Lives: ${lives}`;
+  updateScoreBar();
+}
+
 function updateScoreBar() {
-  const percent = Math.min((score / 100) * 100, 100);
+  const percent = Math.min((score / goal) * 100, 100);
   scoreFill.style.width = percent + "%";
 }
 
+// 🎮 Start Game
 startButton.addEventListener("click", () => {
-  if (isGameRunning) return; // Prevent double start
+  if (isGameRunning) return;
   isGameRunning = true;
-
-  // Reset game
   score = 0;
   lives = 3;
-  scoreDisplay.textContent = "Score: 0";
-  livesDisplay.textContent = "Lives: 3";
+  updateHUD();
   scoreFill.style.width = "0%";
 
-  // Remove old raindrops but NOT the bucket
-  const oldDrops = document.querySelectorAll(".raindrop");
-  oldDrops.forEach((d) => d.remove());
-
+  document.querySelectorAll(".raindrop").forEach((d) => d.remove());
   clearInterval(gameInterval);
-  gameInterval = setInterval(createRaindrop, 800);
+  gameInterval = setInterval(createRaindrop, spawnRate);
 });
 
-// ✅ Move bucket
+// 🧺 Move bucket
 document.addEventListener("keydown", (event) => {
   const bucketLeft = parseInt(window.getComputedStyle(bucket).left);
-  const step = gameArea.offsetWidth * 0.05; // Move 5% of game width per press
+  const step = gameArea.offsetWidth * 0.05;
 
-
-  if (!isGameRunning) return; // Only move when game is active
+  if (!isGameRunning) return;
 
   if (event.key === "ArrowLeft" && bucketLeft > 0) {
     bucket.style.left = bucketLeft - step + "px";
@@ -105,5 +138,6 @@ document.addEventListener("keydown", (event) => {
     bucket.style.left = bucketLeft + step + "px";
   }
 });
+
 
 

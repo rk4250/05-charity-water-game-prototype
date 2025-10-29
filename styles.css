@@ -16,7 +16,7 @@ Secondary Colors:
 body {
   text-align: center;
   background: linear-gradient(to bottom, #8fd3f4, #84fab0);
-  font-family: Arial, sans-serif;
+  font-family: 'Montserrat', sans-serif;
   color: white;
   margin: 0;
   overflow-x: hidden;
@@ -65,19 +65,24 @@ h1 {
   left: 45%;
   width: 12%;
   aspect-ratio: 5 / 3;
-  background: gold;
+  background: #FFC907;
   border-radius: 8px;
 }
 
 #startButton {
   padding: 0.8rem 2rem;
   font-size: 1rem;
-  background: green;
+  background: #159A48;
   color: white;
   border: none;
   border-radius: 8px;
   cursor: pointer;
   margin-top: 1rem;
+  transition: background 0.3s ease;
+}
+
+#startButton:hover {
+  background: #0c6f34;
 }
 
 .scoreBar {
@@ -98,6 +103,23 @@ h1 {
   width: 0%;
   background: linear-gradient(to right, #00c853, #64dd17);
   transition: width 0.3s ease;
+}
+
+footer {
+  margin-top: 2rem;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.3);
+  border-top: 1px solid white;
+}
+
+footer a {
+  color: #FFC907;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+footer a:hover {
+  text-decoration: underline;
 }
 
 /* 📱 Small screens */
